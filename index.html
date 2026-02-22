@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人记账工具</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-wallet"></i> 个人记账</h1>
+            <button class="btn-primary" id="addExpenseBtn">
+                <i class="fas fa-plus"></i> 快速记账
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Budget Overview -->
+            <section class="budget-section">
+                <h2>本月预算</h2>
+                <div class="budget-info">
+                    <div class="budget-card">
+                        <div class="budget-label">预算总额</div>
+                        <div class="budget-value" id="totalBudget">¥0.00</div>
+                    </div>
+                    <div class="budget-card">
+                        <div class="budget-label">已支出</div>
+                        <div class="budget-value spent" id="spentAmount">¥0.00</div>
+                    </div>
+                    <div class="budget-card">
+                        <div class="budget-label">剩余预算</div>
+                        <div class="budget-value remaining" id="remainingBudget">¥0.00</div>
+                    </div>
+                    <div class="budget-card">
+                        <div class="budget-label">每日可支配</div>
+                        <div class="budget-value daily" id="dailyBudget">¥0.00</div>
+                    </div>
+                </div>
+                <div class="budget-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">0%</div>
+                </div>
+                <div class="budget-status" id="budgetStatus"></div>
+                <button class="btn-secondary" id="setBudgetBtn">
+                    <i class="fas fa-cog"></i> 设置预算
+                </button>
+            </section>
+
+            <!-- Statistics Section -->
+            <section class="expenses-section">
+                <h2>统计分析</h2>
+                <div class="charts-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 20px;">
+                    <div style="background-color: var(--bg); border-radius: 12px; padding: 16px;">
+                        <h3 style="margin-bottom: 16px; font-size: 16px;">分类占比</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                    <div style="background-color: var(--bg); border-radius: 12px; padding: 16px;">
+                        <h3 style="margin-bottom: 16px; font-size: 16px;">每日支出趋势</h3>
+                        <canvas id="dailyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expense List -->
+            <section class="expenses-section">
+                <div class="section-header">
+                    <h2>支出记录</h2>
+                    <div class="filter-controls">
+                        <select id="filterCategory" class="filter-select">
+                            <option value="">所有类别</option>
+                        </select>
+                        <select id="filterDate" class="filter-select">
+                            <option value="all">全部时间</option>
+                            <option value="today">今天</option>
+                            <option value="week">本周</option>
+                            <option value="month" selected>本月</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="expenses-list" id="expensesList"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加支出</h3>
+                <button class="close-btn" id="closeModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="expense-form" id="expenseForm">
+                <input type="hidden" id="expenseId">
+                <div class="form-group">
+                    <label>金额</label>
+                    <input type="number" id="expenseAmount" step="0.01" min="0" required placeholder="请输入金额">
+                </div>
+                <div class="form-group">
+                    <label>类别</label>
+                    <select id="expenseCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label>日期</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label>备注</label>
+                    <textarea id="expenseNote" placeholder="可选备注"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal" id="budgetModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置月度预算</h3>
+                <button class="close-btn" id="closeBudgetModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form class="expense-form" id="budgetForm">
+                <div class="form-group">
+                    <label>月度预算总额（元）</label>
+                    <input type="number" id="budgetAmount" step="1" min="0" required placeholder="请输入预算">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelBudgetBtn">取消</button>
+                    <button type="submit" class="btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>确认删除</h3>
+                <button class="close-btn" id="closeConfirmModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p style="text-align: center; margin: 20px 0;">确定要删除这条支出记录吗？</p>
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="cancelConfirmBtn">取消</button>
+                <button type="button" class="btn-primary delete" id="confirmDeleteBtn">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+:root {
+    --primary: #6c5ce7;
+    --primary-light: #a29bfe;
+    --secondary: #00cec9;
+    --danger: #ff6b6b;
+    --warning: #fdcb6e;
+    --success: #00b894;
+    --bg: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* App容器 */
+.app {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+.header h1 {
+    color: var(--primary);
+    font-size: 28px;
+}
+
+/* Buttons */
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #5a4bd3;
+}
+
+.btn-secondary {
+    background-color: #dfe6e9;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: #b2bec3;
+}
+
+.btn-primary.delete {
+    background-color: var(--danger);
+}
+
+.btn-primary.delete:hover {
+    background-color: #e05555;
+}
+
+/* Budget Section */
+.budget-section, .expenses-section {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.budget-section h2, .section-header h2 {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.budget-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.budget-card {
+    text-align: center;
+    padding: 16px;
+    background-color: var(--bg);
+    border-radius: 12px;
+}
+
+.budget-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.budget-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.budget-value.spent {
+    color: var(--text-primary);
+}
+
+.budget-value.remaining {
+    color: var(--success);
+}
+
+.budget-value.daily {
+    color: var(--secondary);
+}
+
+/* Progress Bar */
+.budget-progress {
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: #dfe6e9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    text-align: right;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.budget-status {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.budget-status.success {
+    background-color: rgba(0, 184, 148, 0.1);
+    color: var(--success);
+}
+
+.budget-status.warning {
+    background-color: rgba(253, 203, 110, 0.2);
+    color: #d63031;
+}
+
+.budget-status.danger {
+    background-color: rgba(255, 107, 107, 0.1);
+    color: var(--danger);
+}
+
+/* Section Header */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.filter-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.filter-select {
+    padding: 8px 12px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Expenses List */
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: var(--bg);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.expense-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.expense-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.expense-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background-color: var(--primary-light);
+    color: white;
+}
+
+.expense-details h4 {
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.expense-details p {
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.expense-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.expense-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 12px;
+}
+
+.expense-actions button {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.expense-actions button.edit {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.expense-actions button.delete {
+    background-color: var(--danger);
+    color: white;
+}
+
+.expense-actions button:hover {
+    transform: scale(1.1);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    padding: 24px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h3 {
+    color: var(--text-primary);
+}
+
+.close-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background-color: var(--bg);
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Form */
+.expense-form .form-group {
+    margin-bottom: 20px;
+}
+
+.expense-form label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.expense-form input, .expense-form select, .expense-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dfe6e9;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.expense-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .budget-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .expense-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .expense-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
