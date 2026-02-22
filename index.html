@@ -3,102 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人记账工具</title>
+    <title>个人记账工具 v2.0</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="app">
+    <!-- 登录/注册页面 -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <h1><i class="fas fa-wallet"></i> 个人记账</h1>
+            <p class="subtitle">轻松管理您的财务</p>
+            
+            <!-- 登录表单 -->
+            <div class="auth-form" id="loginForm">
+                <h2>登录</h2>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> 用户名</label>
+                    <input type="text" id="loginUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> 密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码">
+                </div>
+                <button class="btn-primary btn-full" onclick="AuthModule.login()">
+                    <i class="fas fa-sign-in-alt"></i> 登录
+                </button>
+                <p class="auth-switch">
+                    还没有账号？<a href="#" onclick="showRegister()">立即注册</a>
+                </p>
+            </div>
+            
+            <!-- 注册表单 -->
+            <div class="auth-form hidden" id="registerForm">
+                <h2>注册</h2>
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> 用户名</label>
+                    <input type="text" id="registerUsername" placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> 密码</label>
+                    <input type="password" id="registerPassword" placeholder="请输入密码（至少6位）">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-lock"></i> 确认密码</label>
+                    <input type="password" id="registerConfirmPassword" placeholder="请再次输入密码">
+                </div>
+                <button class="btn-primary btn-full" onclick="AuthModule.register()">
+                    <i class="fas fa-user-plus"></i> 注册
+                </button>
+                <p class="auth-switch">
+                    已有账号？<a href="#" onclick="showLogin()">立即登录</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主应用页面 -->
+    <div class="app hidden" id="mainApp">
         <!-- Header -->
         <header class="header">
-            <h1><i class="fas fa-wallet"></i> 个人记账</h1>
-            <button class="btn-primary" id="addExpenseBtn">
-                <i class="fas fa-plus"></i> 快速记账
-            </button>
+            <div class="header-left">
+                <h1><i class="fas fa-wallet"></i> 个人记账</h1>
+                <span class="user-info" id="currentUserDisplay"></span>
+            </div>
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-module="budget" onclick="switchModule('budget')">
+                    <i class="fas fa-chart-pie"></i> 预算
+                </button>
+                <button class="nav-tab" data-module="stats" onclick="switchModule('stats')">
+                    <i class="fas fa-chart-bar"></i> 统计
+                </button>
+                <button class="nav-tab" data-module="expenses" onclick="switchModule('expenses')">
+                    <i class="fas fa-list"></i> 支出
+                </button>
+            </nav>
+            <div class="header-right">
+                <button class="btn-secondary" onclick="BackupModule.showBackupModal()">
+                    <i class="fas fa-cloud-upload-alt"></i> 备份/恢复
+                </button>
+                <button class="btn-secondary" onclick="AuthModule.logout()">
+                    <i class="fas fa-sign-out-alt"></i> 退出
+                </button>
+            </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Budget Overview -->
-            <section class="budget-section">
-                <h2>本月预算</h2>
-                <div class="budget-info">
-                    <div class="budget-card">
-                        <div class="budget-label">预算总额</div>
-                        <div class="budget-value" id="totalBudget">¥0.00</div>
+            <!-- 预算模块 -->
+            <section class="module-section" id="budgetModule">
+                <div class="budget-section">
+                    <h2>本月预算</h2>
+                    <div class="budget-info">
+                        <div class="budget-card">
+                            <div class="budget-label">预算总额</div>
+                            <div class="budget-value" id="totalBudget">¥0.00</div>
+                        </div>
+                        <div class="budget-card">
+                            <div class="budget-label">已支出</div>
+                            <div class="budget-value spent" id="spentAmount">¥0.00</div>
+                        </div>
+                        <div class="budget-card">
+                            <div class="budget-label">剩余预算</div>
+                            <div class="budget-value remaining" id="remainingBudget">¥0.00</div>
+                        </div>
+                        <div class="budget-card">
+                            <div class="budget-label">每日可支配</div>
+                            <div class="budget-value daily" id="dailyBudget">¥0.00</div>
+                        </div>
                     </div>
-                    <div class="budget-card">
-                        <div class="budget-label">已支出</div>
-                        <div class="budget-value spent" id="spentAmount">¥0.00</div>
+                    <div class="budget-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">0%</div>
                     </div>
-                    <div class="budget-card">
-                        <div class="budget-label">剩余预算</div>
-                        <div class="budget-value remaining" id="remainingBudget">¥0.00</div>
-                    </div>
-                    <div class="budget-card">
-                        <div class="budget-label">每日可支配</div>
-                        <div class="budget-value daily" id="dailyBudget">¥0.00</div>
-                    </div>
-                </div>
-                <div class="budget-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                    </div>
-                    <div class="progress-text" id="progressText">0%</div>
-                </div>
-                <div class="budget-status" id="budgetStatus"></div>
-                <button class="btn-secondary" id="setBudgetBtn">
-                    <i class="fas fa-cog"></i> 设置预算
-                </button>
-            </section>
-
-            <!-- Statistics Section -->
-            <section class="expenses-section">
-                <h2>统计分析</h2>
-                <div class="charts-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 20px;">
-                    <div style="background-color: var(--bg); border-radius: 12px; padding: 16px;">
-                        <h3 style="margin-bottom: 16px; font-size: 16px;">分类占比</h3>
-                        <canvas id="categoryChart"></canvas>
-                    </div>
-                    <div style="background-color: var(--bg); border-radius: 12px; padding: 16px;">
-                        <h3 style="margin-bottom: 16px; font-size: 16px;">每日支出趋势</h3>
-                        <canvas id="dailyChart"></canvas>
-                    </div>
+                    <div class="budget-status" id="budgetStatus"></div>
+                    <button class="btn-secondary" id="setBudgetBtn" onclick="BudgetModule.openBudgetModal()">
+                        <i class="fas fa-cog"></i> 设置预算
+                    </button>
                 </div>
             </section>
 
-            <!-- Expense List -->
-            <section class="expenses-section">
-                <div class="section-header">
-                    <h2>支出记录</h2>
+            <!-- 统计模块 -->
+            <section class="module-section hidden" id="statsModule">
+                <div class="expenses-section">
+                    <h2>统计分析</h2>
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <h3><i class="fas fa-pie-chart"></i> 分类占比</h3>
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                        <div class="chart-card">
+                            <h3><i class="fas fa-chart-line"></i> 每日支出趋势</h3>
+                            <canvas id="dailyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 支出模块 -->
+            <section class="module-section hidden" id="expensesModule">
+                <div class="expenses-section">
+                    <div class="section-header">
+                        <h2>支出记录</h2>
+                        <div class="section-actions">
+                            <button class="btn-primary" id="addExpenseBtn" onclick="ExpensesModule.openExpenseModal()">
+                                <i class="fas fa-plus"></i> 添加支出
+                            </button>
+                        </div>
+                    </div>
                     <div class="filter-controls">
-                        <select id="filterCategory" class="filter-select">
+                        <select id="filterCategory" class="filter-select" onchange="ExpensesModule.renderExpenses()">
                             <option value="">所有类别</option>
                         </select>
-                        <select id="filterDate" class="filter-select">
+                        <select id="filterDate" class="filter-select" onchange="ExpensesModule.renderExpenses()">
                             <option value="all">全部时间</option>
                             <option value="today">今天</option>
                             <option value="week">本周</option>
                             <option value="month" selected>本月</option>
                         </select>
                     </div>
+                    <div class="expenses-list" id="expensesList"></div>
                 </div>
-                <div class="expenses-list" id="expensesList"></div>
             </section>
         </main>
     </div>
 
-    <!-- Add Expense Modal -->
+    <!-- 添加支出 Modal -->
     <div class="modal" id="expenseModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modalTitle">添加支出</h3>
-                <button class="close-btn" id="closeModalBtn">
+                <button class="close-btn" onclick="closeModal('expenseModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form class="expense-form" id="expenseForm">
+            <form class="expense-form" id="expenseForm" onsubmit="ExpensesModule.handleExpenseSubmit(event)">
                 <input type="hidden" id="expenseId">
                 <div class="form-group">
                     <label>金额</label>
@@ -117,51 +198,81 @@
                     <textarea id="expenseNote" placeholder="可选备注"></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" id="cancelBtn">取消</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('expenseModal')">取消</button>
                     <button type="submit" class="btn-primary">保存</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Budget Modal -->
+    <!-- 预算 Modal -->
     <div class="modal" id="budgetModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>设置月度预算</h3>
-                <button class="close-btn" id="closeBudgetModalBtn">
+                <button class="close-btn" onclick="closeModal('budgetModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form class="expense-form" id="budgetForm">
+            <form class="expense-form" id="budgetForm" onsubmit="BudgetModule.handleBudgetSubmit(event)">
                 <div class="form-group">
                     <label>月度预算总额（元）</label>
                     <input type="number" id="budgetAmount" step="1" min="0" required placeholder="请输入预算">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" id="cancelBudgetBtn">取消</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal('budgetModal')">取消</button>
                     <button type="submit" class="btn-primary">保存</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Confirm Delete Modal -->
+    <!-- 确认删除 Modal -->
     <div class="modal" id="confirmModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>确认删除</h3>
-                <button class="close-btn" id="closeConfirmModalBtn">
+                <button class="close-btn" onclick="closeModal('confirmModal')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             <p style="text-align: center; margin: 20px 0;">确定要删除这条支出记录吗？</p>
             <div class="form-actions">
-                <button type="button" class="btn-secondary" id="cancelConfirmBtn">取消</button>
-                <button type="button" class="btn-primary delete" id="confirmDeleteBtn">删除</button>
+                <button type="button" class="btn-secondary" onclick="closeModal('confirmModal')">取消</button>
+                <button type="button" class="btn-primary delete" onclick="ExpensesModule.confirmDelete()">删除</button>
             </div>
         </div>
     </div>
+
+    <!-- 备份/恢复 Modal -->
+    <div class="modal" id="backupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>数据备份与恢复</h3>
+                <button class="close-btn" onclick="closeModal('backupModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="backup-section">
+                <h4><i class="fas fa-download"></i> 备份数据</h4>
+                <p>将您的所有数据导出为JSON文件进行备份。</p>
+                <button class="btn-primary btn-full" onclick="BackupModule.exportData()">
+                    <i class="fas fa-file-export"></i> 导出数据
+                </button>
+            </div>
+            <div class="backup-section">
+                <h4><i class="fas fa-upload"></i> 恢复数据</h4>
+                <p>从备份文件中恢复您的数据（注意：这将覆盖当前数据）。</p>
+                <input type="file" id="backupFileInput" accept=".json" style="display: none;" onchange="BackupModule.importData(event)">
+                <button class="btn-secondary btn-full" onclick="document.getElementById('backupFileInput').click()">
+                    <i class="fas fa-file-import"></i> 选择文件并恢复
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示消息 -->
+    <div class="toast" id="toast"></div>
 
     <script src="app.js"></script>
 </body>
